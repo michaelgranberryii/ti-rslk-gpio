@@ -299,20 +299,19 @@ uint8_t PMOD_SWT_Status()
 }
 
 /**
- * @brief The LED_Pattern_1 function sets the output of the user LEDs based on the status of the user buttons.
+ * @brief The LED_Pattern_1 function sets the output of the user LEDs and the 8 PMOD LEDs based on the status of the user buttons.
  *
- * This function sets the output of both the built-in red LED (P1.0) and the RGB LED (P2.0 - P2.2) based on
+ * This function sets the output of both the built-in red LED (P1.0), the RGB LED (P2.0 - P2.2), and the 8 PMOD LEDs (P9.0 - P9.7) based on
  * the status of the Button 1 (P1.1) and Button 2 (P1.4).
  *
  * @param button_status An 8-bit unsigned integer that indicates the status of Button 1 and Button 2.
- *                      The two user LEDs are controlled based on the value of button_status.
  *
- *  button_status      LED 1 Color      RGB LED Color
- *  -------------      -----------      -------------
- *      0x00               Red              Red
- *      0x10               Red              Off
- *      0x02               Off              Green
- *      0x12               Off              Off
+ *  button_status      LED 1 Color          RGB LED Color               PMOD 8 LED
+ *  -------------      -----------        -----------------             --------------
+ *      0x00            1 Hz Flash          1 Hz Blue FLash                 All Off
+ *      0x10               On                    Off                     0, 2, 4, 6 ON
+ *      0x02               Off                   Pink                    1, 3, 5, 7 ON
+ *      0x12               Off                   Green                      All On
  *
  *
  * @return None
@@ -395,13 +394,25 @@ void LED_Pattern_2()
     }
 }
 
-//ADD DOC STRING
+/**
+ * @brief The LED_Pattern_3 function controls the user LEDs and the eight LEDs on the PMOD 8LD module.
+ *
+ * This function turns off LED1, sets the RGB LED to display a blue color,
+ * and then initiates a binary counter pattern on the PMOD 8LD module. The counter starts from 255 (0xFF)
+ * and decrements down to 0 with a delay of 100 ms between each count. The sequence runs infinitely until another switch
+ * status is detected.
+ *
+ *
+ * @param None
+ *
+ * @return None
+ */
 void LED_Pattern_3()
 {
     LED1_Output(RED_LED_OFF);
     LED2_Output(RGB_LED_BLUE);
 
-    for (uint8_t led_count = 0xFF; led_count >= 0x0; led_count--)
+    for (uint8_t led_count = 0xFF; led_count >= 0; led_count--) // infinite loop but the uint8_t variable led_count will roll back to 0xFF after reaching 0
     {
         PMOD_8LD_Output(led_count);
         Clock_Delay1ms(100);
@@ -413,7 +424,17 @@ void LED_Pattern_3()
     }
 }
 
-//ADD DOC STRING
+/**
+ * @brief The LED_Pattern_4 function controls the user LEDs and the eight LEDs on the PMOD 8LD module.
+ *
+ * This function toggles the red LED1, sets the RGB LED to display a green color and toggle it,
+ * and toggles all the LEDs on the PMOD 8LD module. All toggling is done at a rate of 1 Hz.
+ *
+ *
+ * @param None
+ *
+ * @return None
+ */
 void LED_Pattern_4()
 {
     LED1_Output(RED_LED_ON);
@@ -426,8 +447,19 @@ void LED_Pattern_4()
     Clock_Delay1ms(500);
 }
 
-//ADD DOC STRING
-void LED_Pattern_5()
+/**
+ * @brief The LED_Pattern_5 function controls the user LEDs and the eight LEDs on the PMOD 8LD module.
+ *
+ * This function turns off LED1, turns off the RGB LED,
+ * and displays a ring counter pattern on the PMOD 8LD module. The counter starts from 255 (0xFF)
+ * and decrements down to 0 with a delay of 100 ms between each count. The sequence runs for 7 iterations or until another switch
+ * status is detected.
+ *
+ *
+ * @param None
+ *
+ * @return None
+ */void LED_Pattern_5()
 {
     LED1_Output(RED_LED_OFF);
     LED2_Output(RGB_LED_OFF);
