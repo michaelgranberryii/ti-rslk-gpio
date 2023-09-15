@@ -46,6 +46,8 @@ const uint8_t PMOD_8LD_ALL_OFF      =   0x00;
 const uint8_t PMOD_8LD_ALL_ON       =   0xFF;
 const uint8_t PMOD_8LD_0_3_ON       =   0x0F;
 const uint8_t PMOD_8LD_4_7_ON       =   0xF0;
+const uint8_t PMOD_8LD_0_2_4_6_ON   =   0x55;
+const uint8_t PMOD_8LD_1_3_5_7_ON   =   0xAA;
 
 
 /**
@@ -322,9 +324,13 @@ void LED_Pattern_1(uint8_t button_status)
         // Button 1 and Button 2 are pressed
         case 0x00:
         {
+            PMOD_8LD_Output(PMOD_8LD_ALL_OFF);
             LED1_Output(RED_LED_ON);
-            LED2_Output(RGB_LED_RED);
-            PMOD_8LD_Output(PMOD_8LD_ALL_ON);
+            LED2_Output(RGB_LED_BLUE);
+            Clock_Delay1ms(500);
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_OFF);
+            Clock_Delay1ms(500);
             break;
         }
 
@@ -334,7 +340,7 @@ void LED_Pattern_1(uint8_t button_status)
         {
             LED1_Output(RED_LED_ON);
             LED2_Output(RGB_LED_OFF);
-            PMOD_8LD_Output(PMOD_8LD_0_3_ON);
+            PMOD_8LD_Output(PMOD_8LD_0_2_4_6_ON);
             break;
         }
 
@@ -343,8 +349,8 @@ void LED_Pattern_1(uint8_t button_status)
         case 0x02:
         {
             LED1_Output(RED_LED_OFF);
-            LED2_Output(RGB_LED_GREEN);
-            PMOD_8LD_Output(PMOD_8LD_4_7_ON);
+            LED2_Output(RGB_LED_PINK);
+            PMOD_8LD_Output(PMOD_8LD_1_3_5_7_ON);
             break;
         }
 
@@ -352,8 +358,8 @@ void LED_Pattern_1(uint8_t button_status)
         case 0x12:
         {
             LED1_Output(RED_LED_OFF);
-            LED2_Output(RGB_LED_OFF);
-            PMOD_8LD_Output(PMOD_8LD_ALL_OFF);
+            LED2_Output(RGB_LED_GREEN);
+            PMOD_8LD_Output(PMOD_8LD_ALL_ON);
             break;
         }
     }
@@ -389,6 +395,56 @@ void LED_Pattern_2()
     }
 }
 
+//ADD DOC STRING
+void LED_Pattern_3()
+{
+    LED1_Output(RED_LED_OFF);
+    LED2_Output(RGB_LED_BLUE);
+
+    for (uint8_t led_count = 0xFF; led_count >= 0x0; led_count--)
+    {
+        PMOD_8LD_Output(led_count);
+        Clock_Delay1ms(100);
+        uint8_t switch_status = PMOD_SWT_Status();
+        if (switch_status != 0x02)
+        {
+            break;
+        }
+    }
+}
+
+//ADD DOC STRING
+void LED_Pattern_4()
+{
+    LED1_Output(RED_LED_ON);
+    LED2_Output(RGB_LED_GREEN);
+    PMOD_8LD_Output(PMOD_8LD_ALL_ON);
+    Clock_Delay1ms(500);
+    LED1_Output(RED_LED_OFF);
+    LED2_Output(RGB_LED_OFF);
+    PMOD_8LD_Output(PMOD_8LD_ALL_OFF);
+    Clock_Delay1ms(500);
+}
+
+//ADD DOC STRING
+void LED_Pattern_5()
+{
+    LED1_Output(RED_LED_OFF);
+    LED2_Output(RGB_LED_OFF);
+    uint8_t shift_bit = 0x1;
+    for (uint8_t led_count = 0x0; led_count <= 0x7; led_count++)
+    {
+        PMOD_8LD_Output(shift_bit);
+        Clock_Delay1ms(500);
+        shift_bit = shift_bit << 1;
+        uint8_t switch_status = PMOD_SWT_Status();
+        if (switch_status != 0x08)
+        {
+            break;
+        }
+    }
+}
+
 /**
  * @brief The LED_Controller function selects and executes an appropriate LED pattern based on button and switch statuses.
  *
@@ -417,7 +473,21 @@ void LED_Controller(uint8_t button_status, uint8_t switch_status)
             LED_Pattern_2();
         }
         break;
-
+        case 0x02:
+        {
+            LED_Pattern_3();
+        }
+        break;
+        case 0x04:
+        {
+            LED_Pattern_4();
+        }
+        break;
+        case 0x08:
+        {
+            LED_Pattern_5();
+        }
+        break;
         default:
         {
             LED_Pattern_1(button_status);
@@ -448,6 +518,6 @@ int main(void)
         uint8_t button_status = Get_Buttons_Status();
         uint8_t switch_status = PMOD_SWT_Status();
         LED_Controller(button_status, switch_status);
-        Clock_Delay1ms(100);
+        //Clock_Delay1ms(100);
     }
 }
