@@ -1,1 +1,1 @@
-{"net":{"network_qualities":{"CAESABiAgICA+P////8B":"4G"}}}
+{"net":{"http_server_properties":{"servers":[{"alternative_service":[{"advertised_alpns":["h3"],"expiration":"13341975337740720","port":443,"protocol_str":"quic"}],"anonymization":[],"network_stats":{"srtt":34550},"server":"https://optimizationguide-pa.googleapis.com","supports_spdy":true}],"supports_quic":{"address":"2603:8000:af40:5504:a56c:ff5e:a8c:20ad","used_quic":true},"version":5},"network_qualities":{"CAASABiAgICA+P////8B":"4G","CAESABiAgICA+P////8B":"4G"}}}
